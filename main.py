@@ -1,0 +1,42 @@
+from flask import Flask, render_template, request, redirect
+app = Flask('app')
+
+todos = [
+  {'title' : 'Estudar Python', 'complete':False },
+  {'title' : 'Estudar JavaScript', 'complete':True}
+]
+
+@app.route('/')
+def index():
+  return render_template(
+    'index.html',
+    todos=todos
+  )
+
+@app.route('/create', methods=['POST'])
+def create():
+  title = request.form.get('title')
+  todos.append({
+    'title':title, 
+    'complete':False})
+  
+  return redirect ('/')
+
+@app.route('/delete/<int:id>')
+def delete(id):
+  todos.pop(id)
+  return redirect('/')
+
+@app.route('/complete/<int:index>')
+def complete(index):
+  todos[index]['complete'] = True
+  return redirect ('/')
+
+@app.route('/update/<int:index>', methods = ['POST'])
+def update(index):
+  title = request.form.get('title')
+  todos[index]['title'] = title
+  return redirect ('/')
+  
+if __name__ == '__main__':
+  app.run(host='0.0.0.0', port=8080)
